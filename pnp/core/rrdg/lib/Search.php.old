@@ -1,0 +1,164 @@
+<?php
+\famzah\PNP\PNPApp::getInstance()
+->add_class('\rrdg\lib\Search')
+	->append_method('__construct', function ($me, $config, $Utils, $Mapping) {
+		$me->config = $config;
+		$me->Utils = $Utils;
+		$me->Mapping = $Mapping;
+	})
+	->append_method('get_all_namespaces', function ($me, $target_filter = null) {
+		$ret = [];
+
+		foreach ($me->config['namespaces'] as $rrd_dir => $ns_config) {
+			if (!is_null($target_filter)) {
+				if (!$me->Utils->regex_match_query(
+					$target_filter['namespace'],
+					$ns_config['mapping']['namespace']
+				)) {
+					continue;
+				}
+			}
+
+			$ret[$rrd_dir] = $ns_config;
+		}
+
+		return $ret;
+	})
+	->append_method('search_all_namespaces', function ($me, $target_filter = null) {
+		$ret = [
+			'results_human' => [],
+			'results_raw' => [],
+		];
+
+		foreach ($me->get_all_namespaces($target_filter) as $rrd_dir => $ns_config) {
+			if (!is_null($target_filter)) {
+				if (!$me->Utils->regex_match_query(
+					$target_filter['namespace'],
+					$ns_config['mapping']['namespace']
+				)) {
+					continue;
+				}
+			}
+
+			$r = $me->search_namespace($rrd_dir, $target_filter);
+
+			foreach (array_keys($ret) as $k) {
+				$ret[$k] = array_merge($ret[$k], $r[$k]);
+			}
+		}
+
+		return $ret;
+	})
+	->append_method('search_namespace', function ($me, $rrd_dir, $target_filter = null) {
+		$ds = [];
+		$ds_raw = [];
+		$rrd_dir_with_sep = $rrd_dir.DIRECTORY_SEPARATOR;
+		foreach (glob($rrd_dir_with_sep.'*.rrd') as $rrd_file) {
+			if (!is_file($rrd_file)) continue;
+			$rrd_file_nodir = substr($rrd_file, strlen($rrd_dir_with_sep));
+
+			if (!is_null($target_filter)) {
+				$rrd_file_value = $me->Mapping->map_plain(
+					$rrd_dir, 'rrd_file', $rrd_file_nodir
+				);
+				if (!$me->Utils->regex_match_query(
+					$target_filter['rrd_file'], $rrd_file_value
+				)) {
+					continue;
+				}
+
+				if (is_null($target_filter['metric'])) {
+					// used in the "search" API
+					// don't read the RRD files, because we're interested only
+					// in the RRD filenames
+
+					$ds_raw[] = [
+						'rrd_dir' => $rrd_dir,
+						'rrd_file' => $rrd_file_nodir,
+					];
+
+					continue;
+				}
+			}
+
+			$rrd_info = rrd_info($rrd_file);
+			if (!$rrd_info) {
+				throw new Exception("rrd_info($rrd_file): failed");
+			}
+
+			$cf = [];
+			foreach ($rrd_info as $key => $value) {
+				if (preg_match('/^rra\[\d+\]\.cf$/', $key, $m)) {
+					$cf[$value] = 1;
+				}
+			}
+
+			$seen = [];
+			foreach ($rrd_info as $key => $value) {
+				if (preg_match('/^ds\[(\S+)\]\.[a-z_]+$/', $key, $m)) {
+					$metric = $m[1];
+					if (isset($seen[$metric])) continue;
+
+					if (!is_null($target_filter)) {
+						$_metric_value = $me->Mapping->map_plain(
+							$rrd_dir, 'metric', $metric
+						);
+						if (!$me->Utils->regex_match_query(
+							$target_filter['metric'], $_metric_value
+						)) {
+							continue;
+						}
+
+						if (is_null($target_filter['cfname'])) {
+							// used in the "search" API
+							// don't loop the CF's, because we're interested only
+							// in the metrics
+
+							$ds_raw[] = [
+								'rrd_dir' => $rrd_dir,
+								'rrd_file' => $rrd_file_nodir,
+								'metric' => $metric,
+							];
+
+							continue;
+						}
+					}
+
+					foreach (array_keys($cf) as $cfname) {
+						if (!is_null($target_filter)) {
+
+							if (!$me->Utils->regex_match_query(
+								$target_filter['cfname'], $cfname
+							)) {
+								continue;
+							}
+						}
+
+						$ds[] = [
+							// what Grafana will display in the Metrics tab
+							'text' => $me->Mapping->get_metric_text_desc(
+								$rrd_dir, $rrd_file_nodir, $metric, $cfname
+							),
+							// raw value which Grafana will submit when doing queries
+							'value' => $me->Mapping->get_metric_search_path(
+								$rrd_dir, $rrd_file_nodir, $metric, $cfname
+							)
+						];
+						$ds_raw[] = [
+							'rrd_dir' => $rrd_dir,
+							'rrd_file' => $rrd_file_nodir,
+							'metric' => $metric,
+							'cfname' => $cfname,
+						];
+					}
+					$seen[$metric] = true;
+				}
+			}
+		}
+
+		return [
+			'results_human' => $ds,
+			'results_raw' => $ds_raw,
+		];
+	})
+; // add_class
