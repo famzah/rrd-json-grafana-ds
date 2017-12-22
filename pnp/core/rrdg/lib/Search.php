@@ -137,7 +137,7 @@
 	->append_method('get_rrd_info', function ($me) {
 		$rrd_info = rrd_info($me->rrd_file);
 		if (!$rrd_info) {
-			throw new Exception("rrd_info($rrd_file): failed");
+			throw new Exception(sprintf("rrd_info(%s): failed: %s", $me->rrd_file, rrd_error()));
 		}
 
 		return $rrd_info;
