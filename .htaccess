@@ -1,5 +1,7 @@
 # make PHP files accessible without having to specify the ".php" extension in the URL path
 
+Options -MultiViews
+
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
