@@ -7,7 +7,7 @@ class PNPObject {
 	private $methods;
 	private $vars;
 
-	public function __construct(PNPApp $app, string $ns, array &$methods, $args) {
+	public function __construct(PNPApp $app, /* string */ $ns, array &$methods, $args) {
 		$this->app = $app;
 		$this->ns = $ns;
 		$this->methods = &$methods;
@@ -152,7 +152,8 @@ class PNPObjectCtxProxy {
 		if ($name == 'pnp') {
 			return $this->CallCtx;
 		}
-		return $this->Main->{$name};
+		$ret = &$this->Main->{$name}; # PHP 5.6 compatibility
+		return $ret;
 	}
 
 	public function __isset($name) {

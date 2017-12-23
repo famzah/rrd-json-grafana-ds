@@ -26,7 +26,7 @@ function dump_exception_to_stderr($e) {
 	dump_backtrace_to_stderr($e->getTrace());
 }
 
-function debug_php_error_handler(int $errno, string $errstr, string $errfile, int $errline, array $errcontext) {
+function debug_php_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
 	file_put_contents('php://stderr', sprintf(
 		"PHP warning triggered: %s (\"%s\" line %d)\n\n", $errstr, $errfile, $errline
 	));

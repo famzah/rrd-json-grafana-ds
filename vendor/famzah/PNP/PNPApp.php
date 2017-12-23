@@ -39,13 +39,13 @@ class PNPApp {
 		return self::$app_instance;
 	}
 
-	public function assert_method_name(string $name) {
+	public function assert_method_name(/* string */ $name) {
 		if (strpos($name, '\\') !== false || strpos($name, '..') !== false) {
 			throw new \Exception("Method names cannot contain a backslash or '..': $name");
 		}
 	}
 
-	private function normalize_ns(string $ns) {
+	private function normalize_ns(/* string */ $ns) {
 		if (!preg_match('/[a-z0-9]/i', $ns)) {
 			throw new \Exception("Namespace must contain at least one letter or digit character");
 		}
@@ -64,11 +64,11 @@ class PNPApp {
 		return $ns;
 	}
 
-	public function add_class(string $ns) {
+	public function add_class(/* string */ $ns) {
 		return new PNPClass($this, $ns);
 	}
 
-	private function load_source_file(string $ns) {
+	private function load_source_file(/* string */ $ns) {
 		foreach ($this->plugins as $plugin) {
 			$sf = sprintf('%s/%s/%s.php',
 				$this->pnp_dir,
@@ -81,7 +81,7 @@ class PNPApp {
 		}
 	}
 
-	public function new_object(string $ns, ...$args) {
+	public function new_object(/* string */ $ns, ...$args) {
 		$ns = $this->normalize_ns($ns);
 		$this->load_source_file($ns);
 		if (!isset($this->methods[$ns])) {
@@ -90,7 +90,7 @@ class PNPApp {
 		return new PNPObject($this, $ns, $this->methods[$ns], $args);
 	}
 
-	public function add_method(string $order, string $ns, string $name, \Closure $callable) {
+	public function add_method(/* string */ $order, /* string */ $ns, /* string */ $name, \Closure $callable) {
 		$this->assert_method_name($name);
 		$ns = $this->normalize_ns($ns);
 

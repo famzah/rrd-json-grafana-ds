@@ -7,21 +7,21 @@ class PNPClass {
 	private $app;
 	private $ns;
 
-	public function __construct(PNPApp $app, string $ns) {
+	public function __construct(PNPApp $app, /* string */ $ns) {
 		$this->app = $app;
 		$this->ns = $ns;
 		$this->methods = [];
 	}
 
-	public function prepend_method(string $name, \Closure $callable) {
+	public function prepend_method(/* string */ $name, \Closure $callable) {
 		return $this->add_method('prepend', $name, $callable);
 	}
 
-	public function append_method(string $name, \Closure $callable) {
+	public function append_method(/* string */ $name, \Closure $callable) {
 		return $this->add_method('append', $name, $callable);
 	}
 
-	private function add_method(string $order, string $name, \Closure $callable) {
+	private function add_method(/* string */ $order, /* string */ $name, \Closure $callable) {
 		$this->app->assert_method_name($name);
 
 		// prevent redefinition in the same class
