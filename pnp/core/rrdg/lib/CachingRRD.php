@@ -7,8 +7,8 @@
 	->append_method('_raw_rrd_fetch', function ($me, $rrd_file, $cfname, $query) {
 		$def = [
 			$cfname,
-			'--resolution' => floor($query['grafana']['intervalMs']/1000),
-			'--align-start',
+			'--resolution', floor($query['grafana']['intervalMs']/1000),
+			//'--align-start',
 			'--start', $query['range']['from'],
 			'--end', $query['range']['to'],
 		];
@@ -17,7 +17,7 @@
 		//file_put_contents('php://stderr', print_r($data, 1));
 
 		if (!is_array($data)) {
-			throw new Exception("rrd_fetch($rrd_file): failed");
+			throw new Exception(sprintf("rrd_fetch(%s): failed: %s", $rrd_file, rrd_error()));
 		}
 
 		/*if (count($target_filter)) { // if any filter was supplied by Grafana
