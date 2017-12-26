@@ -47,7 +47,7 @@
 		exit(1);
 	})
 	->append_method('regex_match_query', function ($me, $query_pattern, $subject) {
-		return preg_match(
+		return @preg_match(
 			sprintf('/^%s$/u', $query_pattern),
 			$subject
 		);
