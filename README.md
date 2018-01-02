@@ -14,7 +14,9 @@ Here is an example for the Apache web server:
 ```bash
 cd /var/www/html/rrd-json-grafana-ds/
 
-cat >> .htaccess <<EOF # append to the existing ".htaccess" file
+cp .htaccess-sample .htaccess
+
+cat >> .htaccess <<EOF
 
 AuthType Basic
 AuthName "Restricted Content"
