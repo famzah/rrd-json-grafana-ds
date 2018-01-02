@@ -210,11 +210,15 @@ Add a another variable which uses the previous variables, too (note that this al
 - **Multi-value**: checked
 - **Include All option**: checked
 
-You are done with the Templating variables. This should give you a dynamic way to filter your data interactively.
+You are done with the Templating variables. This should give you a dynamic way to filter your data interactively:
+![Grafana Templating dropdowns](docs/img/templating-dropdowns.jpg?raw=true "Grafana Templating dropdowns")
 
 Get back to the Graph at the Dashboard and "Edit" it. In the "Metrics" tab delete all metrics and leave only one. Enter the following in the second drop down:
 ```
 [$Location]->[$Room]->[$Metric]->[$CF]
 ```
 
-This instructs Grafana to display only what you selected for the Templating variables at the top of the Dashboard. Once you've mastered Templating with RRD, you can customize your Dashboard even further. For example, you can dynamically change the title of the Graph by including the `$Room` name, or you can automatically draw multiple graphs if you selected multiple rooms.
+This instructs Grafana to display only what you selected for the Templating variables at the top of the Dashboard:
+![Grafana Templating used in Graphs metrics query](docs/img/templating-in-query.jpg?raw=true "Grafana Templating used in Graphs metrics query")
+
+Once you've mastered Templating with RRD, you can customize your Dashboard even further. For example, you can dynamically change the title of the Graph by including the `$Room` name, or you can automatically draw multiple graphs if you selected multiple rooms.
