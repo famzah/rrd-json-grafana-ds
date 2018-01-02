@@ -1,3 +1,9 @@
 config.php
 .htaccess
 .htpasswd
+
+# vim swap files (https://github.com/github/gitignore/blob/master/Global/Vim.gitignore)
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
