@@ -14,6 +14,8 @@ Here is an example for the Apache web server:
 ```bash
 cd /var/www/html/rrd-json-grafana-ds/
 
+chmod 700 .git # protect the GIT directory
+
 cp .htaccess-sample .htaccess
 
 cat >> .htaccess <<EOF
