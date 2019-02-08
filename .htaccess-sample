@@ -9,4 +9,4 @@ RewriteCond %{REQUEST_FILENAME} !\.php$
 RewriteRule (.*) $1.php [L]
 
 # https://stackoverflow.com/questions/6142437/make-git-directory-web-inaccessible
-RedirectMatch 404 /\.git
+RedirectMatch 403 /\.git

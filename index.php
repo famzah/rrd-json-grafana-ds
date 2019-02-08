@@ -1,2 +1,2 @@
 <?php
-echo "The RRD JSON DataSource for Grafana is ready to serve!\n";
+echo "The RRDTool JSON DataSource for Grafana is ready to serve!\n";

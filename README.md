@@ -1,3 +1,10 @@
+# The RRDTool JSON Data Source for Grafana
+
+This project lets you use [RRDTool files](https://oss.oetiker.ch/rrdtool/) as a data source backend in your Grafana dashboards. It implements a web service that is actually an HTTP backend adapter for the Grafana [SimpleJson plugin](https://grafana.com/plugins/grafana-simple-json-datasource). We have the following chain of services: RRDTool data files -> rrd-json-grafana-ds HTTP backend -> SimpleJson plugin -> Grafana.
+
+Here is a sample Grafana dashboard which gets its data entirely from RRD files:
+![Grafana Dashboard with RRDTool backend](docs/img/grafana-dashboard-with-rrd-backend.jpg?raw=true "Grafana Dashboard with RRDTool backend")
+
 # Installation
 
 ## Deploy the source code
@@ -44,10 +51,10 @@ curl --user admin https://$YOURDOMAIN/rrd-json-grafana-ds/
 
 The successful HTTP output by "curl" must be:
 ```
-The RRD JSON DataSource for Grafana is ready to serve!
+The RRDTool JSON DataSource for Grafana is ready to serve!
 ```
 
-# Configuration of the RRD JSON DataSource
+# Configuration of the RRDTool JSON DataSource
 
 ## RRD files path
 You need to know where your RRD data files are located. Let's assume that the root directory is "/var/lib/www-data/iot/temphumi":
