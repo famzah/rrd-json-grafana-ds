@@ -59,9 +59,13 @@
 	})
 	->append_method('filter_no_target', function ($me) {
 		$config = $me->config;
-		reset($config['namespaces']);
-		$rrd_dir = key($config['namespaces']); // get the first one
-		$res = $me->Search->search_namespace($rrd_dir);
+		if (0) {
+			reset($config['namespaces']);
+			$rrd_dir = key($config['namespaces']); // get the first one
+			$res = $me->Search->search_namespace($rrd_dir);
+		} else {
+			$res = $me->Search->search_all_namespaces();
+		}
 
 		return $res['results_human'];
 	})
